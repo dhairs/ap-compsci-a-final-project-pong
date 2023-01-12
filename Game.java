@@ -40,7 +40,7 @@ public class Game extends JPanel implements MouseMotionListener {
     // set up the constructor for the game
     public Game() {
         // actually initalize the ball in this constructor
-        gameBall = new GameBall(gameWidth / 2, gameHeight / 2, 4, 4, 8, 12, Color.WHITE);
+        gameBall = new GameBall(gameWidth / 2, gameHeight / 2, 4, 4, 12, Color.WHITE);
         playerOne = new Player(10, 200, 75, 12, Color.WHITE);
         playerTwo = new Player(1420, 200, 75, 12, Color.WHITE);
 
@@ -81,6 +81,55 @@ public class Game extends JPanel implements MouseMotionListener {
 
     }
 
+    // this method will run every updated frame, it will hold the order of the game
+    // logic
+    public void frameUpdate() {
+        // move the ball every frame
+        gameBall.updateBallPos();
+
+        // self explanatory
+        checkScored();
+
+        // self explanatory
+        checkCollision();
+
+        // check if the game needs to bounce off the ball, and then do the game logic
+        // for that
+        gameBall.bounceOffEdges(0, gameHeight);
+
+        // move the players
+        playerOne.movePlayer(playerOneDesiredPosY);
+        playerTwo.movePlayer(playerTwoDesiredPosY);
+
+    }
+
+    // bascially check to make sure the user is touching a ball, if they are, then
+    // bounce the ball and switch the direction
+    public void checkCollision() {
+        // check to see if either player is touching the ball
+        if (gameBall.checkCollisionStatus(playerOne) || gameBall.checkCollisionStatus(playerTwo)) {
+            // if they are, switch the X direction of the ball, then put up the rally count
+            // so we can count that
+            gameBall.bounceX();
+            rallyCount++;
+            // every time the rally is above 3, the speed will consistenly increase to make
+            // the game harder
+            if (rallyCount > 3) {
+                ballSpeed++;
+
+                // this is randomized to make it more like pong, basically, sometimes the ball
+                // will go back the direction it came from instead of moving how it would
+                // naturally
+                double randomChance = Math.random();
+                if (randomChance > 0.5)
+                    gameBall.bounceY();
+
+                // finally, update the ball's speed
+                gameBall.setBallSpeed(ballSpeed);
+            }
+        }
+    }
+
     // this method will check to see if anyone scored
     public void checkScored() {
         // this code will check to see if any of the player's scored
@@ -93,37 +142,6 @@ public class Game extends JPanel implements MouseMotionListener {
             playerTwoScore++;
             resetBall();
         }
-    }
-
-    // this method will run every updated frame
-    public void frameUpdate() {
-        // move the ball every frame
-        gameBall.updateBallPos();
-
-        checkScored();
-
-        // check if the game needs to bounce off the ball, and then do the game logic
-        // for that
-        gameBall.bounceOffEdges(0, gameHeight);
-
-        // bascially check to make sure the user is touching a ball, if they are, then
-        // bounce the ball and switch the direction
-        if (gameBall.checkCollisionStatus(playerOne) || gameBall.checkCollisionStatus(playerTwo)) {
-            gameBall.bounceX();
-            rallyCount++;
-            if (rallyCount > 3) {
-                ballSpeed++;
-                double randomChance = Math.random();
-                if (randomChance > 0.5)
-                    gameBall.bounceY();
-                gameBall.setBallSpeed(ballSpeed);
-            }
-        }
-
-        playerOne.movePlayer(playerOneDesiredPosY);
-
-        playerTwo.movePlayer(playerTwoDesiredPosY);
-
     }
 
     // Resets the position of the ball, note this is not a game reset. that is not
