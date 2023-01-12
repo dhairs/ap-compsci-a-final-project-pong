@@ -27,6 +27,7 @@ public class GameContainer {
         // make sure the player can actually see the game
         gameFrame.setVisible(true);
 
+        // this is so the keyboard commands can work
         gameFrame.requestFocus();
     }
 
@@ -38,6 +39,7 @@ public class GameContainer {
 
                 // run the game's frame updates so everything looks nice and dandy
                 pong.frameUpdate();
+
                 // repaint the screen
                 pong.repaint();
 

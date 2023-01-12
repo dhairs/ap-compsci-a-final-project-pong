@@ -17,6 +17,10 @@ public class Game extends JPanel implements MouseMotionListener {
     static final int GAME_WIDTH = 1440;
     static final int GAME_HEIGHT = 775;
 
+    // Game Defaults
+    static final int DEFAULT_SPEED_X = 6;
+    static final int DEFAULT_SPEED_Y = 6;
+
     // this changes betewen mac and windows, so its just here so you can quickly
     // change it all
     static final int MOVE_UP_KEY = KeyEvent.VK_UP;
@@ -49,31 +53,46 @@ public class Game extends JPanel implements MouseMotionListener {
     // set up the constructor for the game
     public Game() {
         // actually initalize the ball in this constructor
-        gameBall = new GameBall(GAME_WIDTH / 2, GAME_HEIGHT / 2, 4, 4, 12, Color.WHITE);
-        playerOne = new Player(10, 200, 75, 12, Color.WHITE);
-        playerTwo = new Player(1420, 200, 75, 12, Color.WHITE);
+        gameBall = new GameBall(GAME_WIDTH / 2, GAME_HEIGHT / 2, DEFAULT_SPEED_X, DEFAULT_SPEED_Y, 12, Color.WHITE);
+        resetBall();
 
+        // set up both players
+        playerOne = new Player(10, GAME_HEIGHT / 2, 75, 12, Color.WHITE);
+        playerTwo = new Player(1420, GAME_HEIGHT / 2, 75, 12, Color.WHITE);
+
+        // basically make sure they're both at the center of the screen
         playerOneDesiredPosY = GAME_HEIGHT / 2;
         playerTwoDesiredPosY = GAME_HEIGHT / 2;
 
+        // set both scores to 0 (initalizes them)
         playerOneScore = 0;
         playerTwoScore = 0;
 
+        // initialize the difficulty mechanisms
         rallyCount = 0;
-        ballSpeed = 3;
+        ballSpeed = DEFAULT_SPEED_X;
 
-        setFocusable(true);
+        // this just makes sure keyboard and mouse input work
         KeyListener listener = new CustomKeyListener();
         addKeyListener(listener);
         addMouseMotionListener(this);
         setFocusable(true);
     }
 
+    // this is a function that we need to implement of JPanel, basically we'll run
+    // this with the new game graphics every loop to re-render the game and display
+    // the updated data
+
     public void paintComponent(Graphics gameGraphics) {
 
+        /*
+         * if the game has ended and a user won, display the WINNER STRING, which is
+         * adjusted in the announceWinners method
+         */
         if (GAME_OVER) {
+            gameGraphics.setFont(new Font("Calibri", Font.PLAIN, 32));
             gameGraphics.drawString(WINNER_STRING,
-                    (int) (GAME_WIDTH / 2),
+                    (int) (100),
                     (int) (GAME_HEIGHT / 2));
             return;
         }
@@ -90,6 +109,7 @@ public class Game extends JPanel implements MouseMotionListener {
 
         // update score
         gameGraphics.setColor(Color.WHITE);
+
         // we print the string of the score there
         gameGraphics.drawString(playerOneScore + " Player One - Player Two " + playerTwoScore,
                 (int) (GAME_WIDTH / 2 - 100),
@@ -108,6 +128,7 @@ public class Game extends JPanel implements MouseMotionListener {
         }
     }
 
+    // generates a string to display who won the game
     public void announceWinner(String playerWinner, String playerLoser, int scoreWinner, int scoreLoser) {
         WINNER_STRING = playerWinner + " WINS!! They beat " + playerLoser + " with a score of " + scoreWinner + "-"
                 + scoreLoser;
@@ -117,6 +138,10 @@ public class Game extends JPanel implements MouseMotionListener {
     // this method will run every updated frame, it will hold the order of the game
     // logic
     public void frameUpdate() {
+
+        if (GAME_OVER)
+            return;
+
         // move the ball every frame
         gameBall.updateBallPos();
 
@@ -184,12 +209,30 @@ public class Game extends JPanel implements MouseMotionListener {
     // available in this code
     public void resetBall() {
 
+        // these random speed decreases are for the game to be more unpredictable
+        double random = Math.random();
+        int randomizeDirection;
+        if (random > 0.5) {
+            randomizeDirection = -1 * (int) (Math.random() * 2 + 1);
+        } else {
+            randomizeDirection = 1 * (int) (Math.random() * 2 + 1);
+        }
+
+        // to randomly decrease speed of game
+        int randomSpeedDecrease = (int) (Math.random() * 2);
+
+        int randomLocationChange = (int) (Math.random() * 200 + 100);
         gameBall.setBallPosX(GAME_WIDTH / 2);
-        gameBall.setBallPosY(GAME_HEIGHT / 2);
-        gameBall.setBallChangeX(3);
-        gameBall.setBallChangeY(3);
+        gameBall.setBallPosY(GAME_HEIGHT / 2 + randomLocationChange);
+        gameBall.setBallChangeX(DEFAULT_SPEED_X * randomizeDirection - randomSpeedDecrease);
+        gameBall.setBallChangeY(DEFAULT_SPEED_Y * randomizeDirection - randomSpeedDecrease);
+
+        ballSpeed = DEFAULT_SPEED_X;
+
         rallyCount = 0;
+        // this is to slow down the game
         try {
+            // the game won't run for 1 second to give players time to reset
             Thread.sleep(1000);
         } catch (Exception error) {
 
