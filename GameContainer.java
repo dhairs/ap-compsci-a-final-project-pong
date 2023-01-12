@@ -32,8 +32,8 @@ public class GameContainer {
     }
 
     public void startGame() {
-        // make a new Timer with delay 25 so that it can be run at 60 frames per second
-        Timer timer = new Timer(16, new ActionListener() {
+        // make a new Timer with delay 25 so that it can be run at 40 frames per second
+        Timer timer = new Timer(25, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
 

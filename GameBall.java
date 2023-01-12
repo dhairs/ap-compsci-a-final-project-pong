@@ -34,12 +34,8 @@ public class GameBall {
 
     public void bounceOffEdges(int top, int bottom) {
 
-        // if ball is at bottom of screen, move up
-        if (ballPosY > bottom - ballSize) {
-            bounceY();
-        }
-        // if ball is at top of screen, move down
-        else if (ballPosY < top) {
+        // if ball is at bottom or top of screen, move up
+        if (ballPosY > bottom - ballSize || ballPosY < top) {
             bounceY();
         }
 
@@ -84,7 +80,7 @@ public class GameBall {
         changeInY = newSpeed * (changeInY / Math.abs(changeInY));
     }
 
-    // getter functions to check for collisions and stuff in other classes
+    // getter functions to check for collisions
     public int getPosY() {
         return ballPosY;
     }

@@ -86,6 +86,7 @@ public class Game extends JPanel implements MouseMotionListener {
         setFocusable(true);
     }
 
+    // i just added this as a novelty, it calculates the average FPS during the game
     public int averageFPS() {
         int total = 0;
         for (Number num : FPS) {
