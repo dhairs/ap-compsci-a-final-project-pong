@@ -221,6 +221,7 @@ public class Game extends JPanel implements MouseMotionListener {
         // to randomly decrease speed of game
         int randomSpeedDecrease = (int) (Math.random() * 2);
 
+        // less predictable
         int randomLocationChange = (int) (Math.random() * 200 + 100);
         gameBall.setBallPosX(GAME_WIDTH / 2);
         gameBall.setBallPosY(GAME_HEIGHT / 2 + randomLocationChange);
