@@ -7,6 +7,7 @@ import java.awt.*;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -48,6 +49,10 @@ public class Game extends JPanel implements MouseMotionListener {
     private GameBall gameBall;
     private Player playerOne, playerTwo;
 
+    // this is to provide stats on the FPS of the game
+    private long previousRenderTimestamp;
+    private ArrayList<Number> FPS = new ArrayList<Number>();
+
     private int playerOneScore, playerTwoScore;
 
     // set up the constructor for the game
@@ -72,6 +77,8 @@ public class Game extends JPanel implements MouseMotionListener {
         rallyCount = 0;
         ballSpeed = DEFAULT_SPEED_X;
 
+        previousRenderTimestamp = System.currentTimeMillis();
+
         // this just makes sure keyboard and mouse input work
         KeyListener listener = new CustomKeyListener();
         addKeyListener(listener);
@@ -79,10 +86,17 @@ public class Game extends JPanel implements MouseMotionListener {
         setFocusable(true);
     }
 
+    public int averageFPS() {
+        int total = 0;
+        for (Number num : FPS) {
+            total += (int) num;
+        }
+        return (int) (total / FPS.size());
+    }
+
     // this is a function that we need to implement of JPanel, basically we'll run
     // this with the new game graphics every loop to re-render the game and display
     // the updated data
-
     public void paintComponent(Graphics gameGraphics) {
 
         /*
@@ -90,10 +104,14 @@ public class Game extends JPanel implements MouseMotionListener {
          * adjusted in the announceWinners method
          */
         if (GAME_OVER) {
+
             gameGraphics.setFont(new Font("Calibri", Font.PLAIN, 32));
             gameGraphics.drawString(WINNER_STRING,
                     (int) (100),
                     (int) (GAME_HEIGHT / 2));
+            gameGraphics.drawString(averageFPS() + " AVG FPS",
+                    100,
+                    100);
             return;
         }
 
@@ -107,13 +125,25 @@ public class Game extends JPanel implements MouseMotionListener {
         playerOne.render(gameGraphics);
         playerTwo.render(gameGraphics);
 
-        // update score
+        // update the font styling
         gameGraphics.setColor(Color.WHITE);
+        gameGraphics.setFont(new Font("Calibri", Font.PLAIN, 12));
 
-        // we print the string of the score there
+        // calculate the current FPS for this frame
+        long currentRenderTimestamp = System.currentTimeMillis();
+        int currentFPS = (int) (1000 / (currentRenderTimestamp - previousRenderTimestamp));
+        gameGraphics.drawString(currentFPS + " FPS",
+                50,
+                50);
+
+        // update score and then we print the string of the score there
         gameGraphics.drawString(playerOneScore + " Player One - Player Two " + playerTwoScore,
                 (int) (GAME_WIDTH / 2 - 100),
                 (int) (GAME_HEIGHT - GAME_HEIGHT * 0.8));
+
+        // add this so we can utilize the data for the next frame
+        previousRenderTimestamp = currentRenderTimestamp;
+        FPS.add(currentFPS);
 
     }
 

@@ -45,6 +45,8 @@ public class GameBall {
 
     }
 
+    // if the ball bounces off a wall or paddle, these will be used to change its
+    // direction
     public void bounceX() {
         changeInX *= -1;
     }
@@ -53,11 +55,13 @@ public class GameBall {
         changeInY *= -1;
     }
 
+    // every render itll just move the ball to a new position.
     public void updateBallPos() {
         ballPosX += changeInX;
         ballPosY += changeInY;
     }
 
+    // this will allow us to reset the ball
     public void setBallPosX(int newPosX) {
         ballPosX = newPosX;
     }
@@ -80,6 +84,7 @@ public class GameBall {
         changeInY = newSpeed * (changeInY / Math.abs(changeInY));
     }
 
+    // getter functions to check for collisions and stuff in other classes
     public int getPosY() {
         return ballPosY;
     }
@@ -88,6 +93,8 @@ public class GameBall {
         return ballPosX;
     }
 
+    // checks for if the collision has occurred with the player, and then returns a
+    // boolean of true or false
     public boolean checkCollisionStatus(Player player) {
         int rightX = player.getX() + player.paddleWidth;
         int bottomY = player.getY() + player.getHeight();
