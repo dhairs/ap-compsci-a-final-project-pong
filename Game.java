@@ -14,20 +14,29 @@ import java.awt.event.KeyListener;
 public class Game extends JPanel implements MouseMotionListener {
 
     // just so we dont have to keep re-entering this later
-    static final int gameWidth = 1440;
-    static final int gameHeight = 775;
+    static final int GAME_WIDTH = 1440;
+    static final int GAME_HEIGHT = 775;
 
     // this changes betewen mac and windows, so its just here so you can quickly
     // change it all
     static final int MOVE_UP_KEY = KeyEvent.VK_UP;
     static final int MOVE_DOWN_KEY = KeyEvent.VK_DOWN;
 
+    // just the score needed to win the game
+    static final int MAX_SCORE = 5;
+
+    private boolean GAME_OVER = false;
+    private String WINNER_STRING;
+
     // how much we want the player's block to move every time a key is pressed
-    static final int desiredChangeStep = 30;
+    static final int DESIRED_CHANGE_STEP = 30;
+
+    // The position the players want to move to
     private int playerOneDesiredPosY;
     private int playerTwoDesiredPosY;
     private int ballSpeed;
 
+    // so we can increase difficulty
     int rallyCount;
 
     // set up the game ball so we can actually render it (the game ball by itself
@@ -40,12 +49,12 @@ public class Game extends JPanel implements MouseMotionListener {
     // set up the constructor for the game
     public Game() {
         // actually initalize the ball in this constructor
-        gameBall = new GameBall(gameWidth / 2, gameHeight / 2, 4, 4, 12, Color.WHITE);
+        gameBall = new GameBall(GAME_WIDTH / 2, GAME_HEIGHT / 2, 4, 4, 12, Color.WHITE);
         playerOne = new Player(10, 200, 75, 12, Color.WHITE);
         playerTwo = new Player(1420, 200, 75, 12, Color.WHITE);
 
-        playerOneDesiredPosY = gameHeight / 2;
-        playerTwoDesiredPosY = gameHeight / 2;
+        playerOneDesiredPosY = GAME_HEIGHT / 2;
+        playerTwoDesiredPosY = GAME_HEIGHT / 2;
 
         playerOneScore = 0;
         playerTwoScore = 0;
@@ -62,10 +71,17 @@ public class Game extends JPanel implements MouseMotionListener {
 
     public void paintComponent(Graphics gameGraphics) {
 
+        if (GAME_OVER) {
+            gameGraphics.drawString(WINNER_STRING,
+                    (int) (GAME_WIDTH / 2),
+                    (int) (GAME_HEIGHT / 2));
+            return;
+        }
+
         // this will set up the background of the game to be black and the size of the
         // game
         gameGraphics.setColor(Color.BLACK);
-        gameGraphics.fillRect(0, 0, gameWidth, gameHeight);
+        gameGraphics.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
         // add the game ball to the graphics of the game
         gameBall.renderBall(gameGraphics);
@@ -76,9 +92,26 @@ public class Game extends JPanel implements MouseMotionListener {
         gameGraphics.setColor(Color.WHITE);
         // we print the string of the score there
         gameGraphics.drawString(playerOneScore + " Player One - Player Two " + playerTwoScore,
-                (int) (gameWidth / 2 - 100),
-                (int) (gameHeight - gameHeight * 0.8));
+                (int) (GAME_WIDTH / 2 - 100),
+                (int) (GAME_HEIGHT - GAME_HEIGHT * 0.8));
 
+    }
+
+    // holds the logic to see if anyone won the game
+    public void checkWinner() {
+        // if the first player got more than 5 points, they win, otherwise the other
+        // player wins
+        if (playerOneScore > MAX_SCORE) {
+            announceWinner("Player One", "Player Two", playerOneScore, playerTwoScore);
+        } else if (playerTwoScore > MAX_SCORE) {
+            announceWinner("Player Two", "Player One", playerTwoScore, playerOneScore);
+        }
+    }
+
+    public void announceWinner(String playerWinner, String playerLoser, int scoreWinner, int scoreLoser) {
+        WINNER_STRING = playerWinner + " WINS!! They beat " + playerLoser + " with a score of " + scoreWinner + "-"
+                + scoreLoser;
+        GAME_OVER = true;
     }
 
     // this method will run every updated frame, it will hold the order of the game
@@ -90,12 +123,15 @@ public class Game extends JPanel implements MouseMotionListener {
         // self explanatory
         checkScored();
 
+        // check if anyone won, also self explanatory
+        checkWinner();
+
         // self explanatory
         checkCollision();
 
         // check if the game needs to bounce off the ball, and then do the game logic
         // for that
-        gameBall.bounceOffEdges(0, gameHeight);
+        gameBall.bounceOffEdges(0, GAME_HEIGHT);
 
         // move the players
         playerOne.movePlayer(playerOneDesiredPosY);
@@ -133,7 +169,7 @@ public class Game extends JPanel implements MouseMotionListener {
     // this method will check to see if anyone scored
     public void checkScored() {
         // this code will check to see if any of the player's scored
-        if (gameBall.getPosX() > gameWidth) {
+        if (gameBall.getPosX() > GAME_WIDTH) {
             // basically if the second player scored
             playerOneScore++;
             resetBall();
@@ -148,8 +184,8 @@ public class Game extends JPanel implements MouseMotionListener {
     // available in this code
     public void resetBall() {
 
-        gameBall.setBallPosX(gameWidth / 2);
-        gameBall.setBallPosY(gameHeight / 2);
+        gameBall.setBallPosX(GAME_WIDTH / 2);
+        gameBall.setBallPosY(GAME_HEIGHT / 2);
         gameBall.setBallChangeX(3);
         gameBall.setBallChangeY(3);
         rallyCount = 0;
@@ -161,6 +197,8 @@ public class Game extends JPanel implements MouseMotionListener {
 
     }
 
+    // we won't actually use these, but they're required as an implementation of the
+    // MouseMotionListener interface
     @Override
     public void mouseDragged(MouseEvent e) {
 
@@ -176,12 +214,12 @@ public class Game extends JPanel implements MouseMotionListener {
         @Override
         public void keyPressed(KeyEvent event) {
             if (event.getKeyCode() == MOVE_UP_KEY) {
-                if (playerOne.getY() > desiredChangeStep)
-                    playerOneDesiredPosY -= desiredChangeStep;
+                if (playerOne.getY() > DESIRED_CHANGE_STEP)
+                    playerOneDesiredPosY -= DESIRED_CHANGE_STEP;
 
             } else if (event.getKeyCode() == MOVE_DOWN_KEY) {
-                if (playerOne.getY() <= gameHeight - desiredChangeStep)
-                    playerOneDesiredPosY += desiredChangeStep;
+                if (playerOne.getY() <= GAME_HEIGHT - DESIRED_CHANGE_STEP)
+                    playerOneDesiredPosY += DESIRED_CHANGE_STEP;
 
             }
         }
