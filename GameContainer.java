@@ -1,5 +1,4 @@
 import javax.swing.*; // the JavaX Swing toolkit gives us access to specific methods necessary to create 
-import java.awt.*; // this library will be used for the timer
 
 // these two are for updating the AWT's Timer
 import java.awt.event.ActionEvent;
@@ -17,7 +16,7 @@ public class GameContainer {
         gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         // make the game nice and large for big screens (1600x900, 16:9 aspect ratio)
-        gameFrame.setSize(1600, 900);
+        gameFrame.setSize(1600, 800);
 
         // create a new instance of our GameContainer so we can actually see the game:
         pong = new Game();

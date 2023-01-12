@@ -7,7 +7,6 @@ public class GameBall {
     // declare all the ball's variables, they'll be private so no other class can
     // mess with them
     private int ballPosX, ballPosY, changeInX, changeInY, ballSpeed, ballSize;
-    private Color ballColor;
 
     // we need to instantiate all these values, which we'll do with the default
     // constructor
@@ -18,7 +17,6 @@ public class GameBall {
         this.changeInX = changeInX;
         this.changeInY = changeInY;
         this.ballSpeed = ballSpeed;
-        this.ballColor = color;
         this.ballSize = ballSize;
     }
 
@@ -59,6 +57,29 @@ public class GameBall {
     public void updateBallPos() {
         ballPosX += changeInX;
         ballPosY += changeInY;
+    }
+
+    public void setBallPosX(int newPosX) {
+        ballPosX = newPosX;
+    }
+
+    public void setBallPosY(int newPosY) {
+        ballPosY = newPosY;
+    }
+
+    public void setBallChangeX(int newChangeX) {
+        changeInX = newChangeX;
+    }
+
+    public void setBallChangeY(int newChangeY) {
+        changeInY = newChangeY;
+    }
+
+    public void setBallSpeed(int newSpeed) {
+        ballSpeed = newSpeed;
+
+        changeInX = newSpeed * (changeInX / Math.abs(changeInX));
+        changeInY = newSpeed * (changeInY / Math.abs(changeInY));
     }
 
     public int getPosY() {
