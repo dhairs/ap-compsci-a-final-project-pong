@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GameContainer {
-    private static JFrame gameFrame = new JFrame("Pong Game");
+    private static JFrame gameFrame = new JFrame("Pong");
 
     // global variable to track the current state of the game
     Game pong;
