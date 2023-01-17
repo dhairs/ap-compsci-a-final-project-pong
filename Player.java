@@ -42,7 +42,7 @@ public class Player {
 
         // paint the rectangle for the paddle
         playerPaddleGraphics.setColor(playerPaddleColor);
-        playerPaddleGraphics.drawRect(playerPaddlePosX, playerPaddlePosY, paddleWidth, playerPaddleHeight);
+        playerPaddleGraphics.fillRect(playerPaddlePosX, playerPaddlePosY, paddleWidth, playerPaddleHeight);
 
     }
 

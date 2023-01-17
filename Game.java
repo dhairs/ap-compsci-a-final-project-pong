@@ -16,7 +16,9 @@ public class Game extends JPanel implements MouseMotionListener {
 
     // just so we dont have to keep re-entering this later
     static final int GAME_WIDTH = 1440;
-    static final int GAME_HEIGHT = 775;
+    static final int GAME_HEIGHT = 770;
+    // static final int GAME_WIDTH = 810;
+    // static final int GAME_HEIGHT = 770;
 
     // Game Defaults
     static final int DEFAULT_SPEED_X = 6;
@@ -26,6 +28,8 @@ public class Game extends JPanel implements MouseMotionListener {
     // change it all
     static final int MOVE_UP_KEY = KeyEvent.VK_UP;
     static final int MOVE_DOWN_KEY = KeyEvent.VK_DOWN;
+    static final int ALT_MOVE_UP_KEY = KeyEvent.VK_W;
+    static final int ALT_MOVE_DOWN_KEY = KeyEvent.VK_S;
 
     // just the score needed to win the game
     static final int MAX_SCORE = 5;
@@ -63,7 +67,7 @@ public class Game extends JPanel implements MouseMotionListener {
 
         // set up both players
         playerOne = new Player(10, GAME_HEIGHT / 2, 75, 12, Color.WHITE);
-        playerTwo = new Player(1420, GAME_HEIGHT / 2, 75, 12, Color.WHITE);
+        playerTwo = new Player(GAME_WIDTH - 20, GAME_HEIGHT / 2, 75, 12, Color.WHITE);
 
         // basically make sure they're both at the center of the screen
         playerOneDesiredPosY = GAME_HEIGHT / 2;
@@ -242,22 +246,27 @@ public class Game extends JPanel implements MouseMotionListener {
 
         // these random speed decreases are for the game to be more unpredictable
         double random = Math.random();
-        int randomizeDirection;
+        int randomizeDirection, randomSpeedIncrease;
         if (random > 0.5) {
-            randomizeDirection = -1 * (int) (Math.random() * 2 + 1);
+            randomizeDirection = -1;
         } else {
-            randomizeDirection = 1 * (int) (Math.random() * 2 + 1);
+            randomizeDirection = 1;
         }
+        random = Math.random();
 
-        // to randomly decrease speed of game
-        int randomSpeedDecrease = (int) (Math.random() * 2);
-
+        if (random > 0.5) {
+            // to randomly increase speed of game
+            randomSpeedIncrease = (int) (Math.random() * 3);
+        } else {
+            // to randomly decrease speed of game
+            randomSpeedIncrease = (int) (Math.random() * 3) * -1;
+        }
         // less predictable
         int randomLocationChange = (int) (Math.random() * 200 + 100);
         gameBall.setBallPosX(GAME_WIDTH / 2);
         gameBall.setBallPosY(GAME_HEIGHT / 2 + randomLocationChange);
-        gameBall.setBallChangeX(DEFAULT_SPEED_X * randomizeDirection - randomSpeedDecrease);
-        gameBall.setBallChangeY(DEFAULT_SPEED_Y * randomizeDirection - randomSpeedDecrease);
+        gameBall.setBallChangeX(DEFAULT_SPEED_X * randomizeDirection + randomSpeedIncrease);
+        gameBall.setBallChangeY(DEFAULT_SPEED_Y * randomizeDirection + randomSpeedIncrease);
 
         ballSpeed = DEFAULT_SPEED_X;
 
@@ -288,11 +297,11 @@ public class Game extends JPanel implements MouseMotionListener {
 
         @Override
         public void keyPressed(KeyEvent event) {
-            if (event.getKeyCode() == MOVE_UP_KEY) {
+            if (event.getKeyCode() == MOVE_UP_KEY || event.getKeyCode() == ALT_MOVE_UP_KEY) {
                 if (playerOne.getY() > DESIRED_CHANGE_STEP)
                     playerOneDesiredPosY -= DESIRED_CHANGE_STEP;
 
-            } else if (event.getKeyCode() == MOVE_DOWN_KEY) {
+            } else if (event.getKeyCode() == MOVE_DOWN_KEY || event.getKeyCode() == ALT_MOVE_DOWN_KEY) {
                 if (playerOne.getY() <= GAME_HEIGHT - DESIRED_CHANGE_STEP)
                     playerOneDesiredPosY += DESIRED_CHANGE_STEP;
 
